@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maré Alta — Ecologia dos Fundos Marinhos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* =========================================================================
+   ARQUIVO DO SITE "MARÉ ALTA" — divulgação científica de ecologia bentônica
+   -------------------------------------------------------------------------
+   COMO EDITAR ESTE SITE (leia antes de mexer):
+
+   1) Quase todo o CONTEÚDO (textos, ecossistemas, glossário, posts do blog,
+      cartas e perguntas dos jogos, infográficos) fica dentro da tag
+      <script> lá no final do arquivo, dentro do objeto CONTEUDO. Procure
+      por ">>> EDITAR AQUI <<<" — são os pontos pensados para os alunos
+      mexerem sem precisar entender o resto do código.
+
+   2) As CORES e FONTES do site inteiro estão centralizadas logo abaixo,
+      em ":root". Basta trocar os valores ali para mudar a identidade
+      visual de todo o site de uma vez.
+
+   3) Este é um arquivo HTML único (HTML+CSS+JS juntos). Pode ser aberto
+      direto no navegador (duplo clique) ou hospedado em qualquer serviço
+      gratuito de páginas estáticas (GitHub Pages, Netlify, Vercel).
+   ========================================================================= */
+
+  :root{
+    /* ---- Paleta "Maré Alta": azul institucional (UNESP) + areia ----
+       Os 7 ecossistemas usam um degradê próprio, do litoral ao mar
+       profundo — ver CONTEUDO.ecossistemas mais abaixo. */
+    --areia:        #EDE6D6;  /* fundo geral, cor da areia seca */
+    --espuma:       #FAF8F2;  /* fundo de cartões, mais clara que a areia */
+    --agua-funda:   #0E3A5C;  /* azul profundo — cabeçalhos, nav */
+    --mar:          #2E6B93;  /* azul médio — links, destaques secundários */
+    --concha:       #C1613D;  /* terracota-coral — usar só em poucos destaques */
+    --mexilhao:     #201E1B;  /* quase preto — texto principal */
+    --linha:        #D2D8DA;  /* linhas divisórias, bordas sutis */
+
+    --fonte-display: 'Fraunces', serif;
+    --fonte-corpo:    'Source Sans 3', sans-serif;
+    --fonte-mono:     'IBM Plex Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--areia);
+    color:var(--mexilhao);
+    font-family:var(--fonte-corpo);
+    line-height:1.55;
+  }
+  h1,h2,h3,h4{
+    font-family:var(--fonte-display);
+    font-weight:700;
+    margin:0 0 .4em 0;
+    color:var(--agua-funda);
+  }
+  p{ margin:0 0 1em 0; }
+  a{ color:var(--mar); }
+  img{ max-width:100%; display:block; }
+  button{ font-family:var(--fonte-corpo); cursor:pointer; }
+  .rotulo{
+    font-family:var(--fonte-mono);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-size:.72rem;
+    color:var(--mar);
+  }
+  .cientifico{ font-style:italic; }
+
+  /* ---------- Faixa de zonação: elemento de assinatura do site ---------- */
+  .faixa-nav{
+    position:sticky; top:0; z-index:50;
+    background:var(--agua-funda);
+    border-bottom:3px solid var(--concha);
+  }
+  .faixa-nav .marca{
+    color:var(--espuma);
+    font-family:var(--fonte-display);
+    font-weight:700;
+    font-size:1.25rem;
+    padding:.9rem 1.2rem .3rem;
+  }
+  .faixa-nav .marca small{
+    display:block;
+    font-family:var(--fonte-mono);
+    font-weight:400;
+    font-size:.65rem;
+    letter-spacing:.1em;
+    color:#A9C6DA;
+    text-transform:uppercase;
+  }
+  .abas{
+    display:flex; flex-wrap:wrap;
+    list-style:none; margin:0; padding:0 .6rem .6rem;
+    gap:.35rem;
+  }
+  .abas button{
+    background:transparent;
+    border:1px solid #204B6E;
+    color:#CFE1EE;
+    padding:.5rem .9rem;
+    border-radius:999px;
+    font-size:.85rem;
+    font-weight:600;
+    transition:.15s ease;
+  }
+  .abas button:hover{ border-color:var(--concha); color:#fff; }
+  .abas button[aria-selected="true"]{
+    background:var(--concha);
+    border-color:var(--concha);
+    color:#fff;
+  }
+  .abas button:focus-visible, a:focus-visible, .carta:focus-visible, .chip:focus-visible, .zona-alvo:focus-visible{
+    outline:3px solid var(--concha); outline-offset:2px;
+  }
+
+  main{ max-width:960px; margin:0 auto; padding:2.4rem 1.3rem 5rem; }
+  section[role="tabpanel"][hidden]{ display:none; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    display:grid; gap:1.5rem;
+    padding:2.4rem 0 2.8rem;
+    border-bottom:1px solid var(--linha);
+    margin-bottom:2.2rem;
+  }
+  .hero h1{ font-size:clamp(2rem, 5vw, 3rem); max-width:16ch; }
+  .hero .tese{ font-size:1.15rem; max-width:52ch; }
+  .faixa-diagrama{ margin-top:1rem; }
+  .faixa-diagrama figcaption{
+    margin-top:.5rem; font-size:.8rem; color:var(--mar);
+  }
+
+  /* ---------- Cartões genéricos ---------- */
+  .grade{ display:grid; gap:1.1rem; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); }
+  .cartao{
+    background:var(--espuma);
+    border:1px solid var(--linha);
+    border-radius:10px;
+    padding:1.1rem 1.2rem;
+  }
+  .cartao h3{ font-size:1.15rem; margin-bottom:.3rem; }
+  .cartao .rotulo{ margin-bottom:.3rem; display:block; }
+
+  /* ---------- Ecossistemas / Glossário: bloco de foto/ilustração ---------- */
+  .foto-espaco{
+    aspect-ratio:4/3;
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-family:var(--fonte-mono); font-size:.7rem;
+    text-align:center; padding:.5rem;
+    margin-bottom:.7rem;
+    border:2px dashed rgba(255,255,255,.55);
+  }
+
+  /* ---------- Infográficos ---------- */
+  .info-card{ background:var(--espuma); border:1px solid var(--linha); border-radius:10px; overflow:hidden; }
+  .info-card .corpo{ padding:1rem 1.2rem 1.3rem; }
+  .em-breve{
+    display:flex; align-items:center; justify-content:center;
+    aspect-ratio:16/10; background:repeating-linear-gradient(135deg,var(--areia),var(--areia) 10px,#E4DAC4 10px,#E4DAC4 20px);
+    color:var(--mar); font-family:var(--fonte-mono); font-size:.75rem;
+  }
+
+  /* ---------- Sub-navegação dos jogos ---------- */
+  .sub-abas{
+    display:flex; flex-wrap:wrap; gap:.5rem; list-style:none; padding:0; margin:0 0 1.4rem;
+  }
+  .sub-abas button{
+    background:var(--espuma); border:1px solid var(--linha); color:var(--agua-funda);
+    padding:.5rem .95rem; border-radius:999px; font-size:.85rem; font-weight:600;
+  }
+  .sub-abas button[aria-selected="true"]{ background:var(--agua-funda); border-color:var(--agua-funda); color:#fff; }
+  .jogo-painel[hidden]{ display:none; }
+
+  /* ---------- Jogo 1: memória ---------- */
+  .tabuleiro{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem;
+    max-width:600px;
+  }
+  .carta{
+    aspect-ratio:1; border-radius:8px; border:1px solid var(--linha);
+    background:var(--agua-funda); color:transparent;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:.35rem; font-size:.74rem; font-weight:600;
+    transition:.2s ease;
+  }
+  .carta.virada, .carta.encontrada{
+    background:var(--espuma); color:var(--mexilhao); border-color:var(--mar);
+  }
+  .carta.encontrada{ background:#E3EDF3; border-color:var(--mar); opacity:.85; }
+  .placar{ font-family:var(--fonte-mono); font-size:.85rem; margin:.8rem 0; color:var(--mar); }
+  .botao-primario{
+    background:var(--concha); color:#fff; border:none; border-radius:999px;
+    padding:.55rem 1.1rem; font-weight:600; font-size:.9rem;
+  }
+  .botao-secundario{
+    background:transparent; border:1px solid var(--agua-funda); color:var(--agua-funda);
+    border-radius:999px; padding:.55rem 1.1rem; font-weight:600; font-size:.9rem;
+  }
+
+  /* ---------- Jogo 2: quiz ---------- */
+  .quiz-caixa{
+    background:var(--espuma); border:1px solid var(--linha); border-radius:12px;
+    padding:1.4rem; max-width:560px;
+  }
+  .quiz-progresso{ font-family:var(--fonte-mono); font-size:.75rem; color:var(--mar); margin-bottom:.5rem; }
+  .quiz-opcoes{ display:grid; gap:.6rem; margin-top:1rem; }
+  .quiz-opcoes button{
+    text-align:left; background:#fff; border:1px solid var(--linha); border-radius:8px;
+    padding:.65rem .8rem; font-size:.92rem;
+  }
+  .quiz-opcoes button:hover{ border-color:var(--mar); }
+  .quiz-opcoes button.certa{ background:#E1F0E4; border-color:#3E8358; }
+  .quiz-opcoes button.errada{ background:#F6E3DE; border-color:var(--concha); }
+  .quiz-feedback{ min-height:1.4em; font-weight:600; margin-top:.8rem; }
+
+  /* ---------- Jogo 3: zonação (cenário ilustrado + arrastar-e-soltar) ---------- */
+  .zonacao-cena{
+    display:flex; flex-direction:column; border-radius:14px; overflow:hidden;
+    border:3px solid var(--agua-funda); margin-bottom:1.2rem;
+    box-shadow:0 4px 14px rgba(14,58,92,.15);
+  }
+  .zona-alvo{
+    flex:1; padding:.7rem .9rem; display:flex; flex-direction:column; justify-content:flex-end;
+    min-height:92px; transition:filter .15s; position:relative;
+  }
+  .zona-alvo .zona-rotulo{
+    font-family:var(--fonte-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.05em;
+  }
+  .zona-alvo .zona-rotulo small{
+    display:block; font-size:.68rem; text-transform:none; letter-spacing:0; opacity:.9;
+    font-family:var(--fonte-corpo); margin-top:.15rem;
+  }
+  .zona-alvo.arraste-ativo{ filter:brightness(1.1); outline:2px dashed rgba(255,255,255,.7); outline-offset:-5px; }
+  .zona-alvo.tremer{ animation: tremer .3s; }
+  @keyframes tremer{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
+
+  .lista-colocados{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.5rem; min-height:46px; }
+  .lista-colocados .criatura-ficha{ width:44px; padding:.2rem; cursor:default; background:rgba(255,255,255,.85); }
+  .lista-colocados .criatura-ficha span{ display:none; }
+
+  .zonacao-banco{ display:flex; flex-wrap:wrap; gap:.6rem; }
+  .criatura-ficha{
+    width:88px; display:flex; flex-direction:column; align-items:center; gap:.3rem;
+    padding:.5rem .4rem; background:var(--espuma); border:1px solid var(--linha); border-radius:10px;
+    cursor:grab; touch-action:none; user-select:none;
+  }
+  .criatura-ficha svg{ width:44px; height:44px; }
+  .criatura-ficha span{ font-size:.7rem; text-align:center; font-weight:600; line-height:1.2; }
+  .criatura-ficha.selecionada{ outline:3px solid var(--concha); outline-offset:1px; }
+  .criatura-ficha.colocada{ opacity:.25; pointer-events:none; }
+  .criatura-ficha.origem-arrastando{ opacity:.35; }
+  .arrastando-fantasma{
+    position:fixed; z-index:999; pointer-events:none;
+    box-shadow:0 10px 24px rgba(0,0,0,.3); opacity:.95;
+  }
+
+  /* ---------- Blog ---------- */
+  .post{ border-bottom:1px solid var(--linha); padding:1.4rem 0; }
+  .post:first-child{ padding-top:0; }
+  .post-meta{ font-family:var(--fonte-mono); font-size:.72rem; color:var(--mar); margin-bottom:.3rem; }
+  .post h3{ margin-bottom:.3rem; }
+  .post .texto-completo[hidden]{ display:none; }
+  .form-post{
+    background:var(--espuma); border:1px solid var(--linha); border-radius:10px;
+    padding:1.2rem; margin-top:1.6rem; display:grid; gap:.7rem;
+  }
+  .form-post label{ font-size:.82rem; font-weight:600; }
+  .form-post input, .form-post textarea{
+    width:100%; padding:.55rem .7rem; border:1px solid var(--linha); border-radius:6px;
+    font-family:var(--fonte-corpo); font-size:.92rem; background:#fff;
+  }
+  .aviso{
+    font-size:.78rem; color:var(--mar); background:#E3EDF3; border:1px dashed var(--mar);
+    border-radius:8px; padding:.6rem .8rem; margin-top:.6rem;
+  }
+
+  footer{
+    background:var(--agua-funda); color:#CFE1EE; padding:2rem 1.3rem;
+    font-size:.85rem; text-align:center;
+  }
+  footer a{ color:#fff; }
+  footer p{ max-width:640px; margin:0 auto .4em; }
+
+  @media (prefers-reduced-motion: reduce){ *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body>
+
+<nav class="faixa-nav">
+  <div class="marca">Maré Alta<small>Ecologia de ambientes bentônicos · UNESP/IBCLP</small></div>
+  <!-- >>> EDITAR AQUI <<< para adicionar/remover abas, lembre de criar a
+       section[role=tabpanel] correspondente lá embaixo com o mesmo id. -->
+  <ul class="abas" role="tablist" aria-label="Seções do site">
+    <li role="presentation"><button role="tab" data-tab="inicio" aria-selected="true">Início</button></li>
+    <li role="presentation"><button role="tab" data-tab="ecossistemas" aria-selected="false">Ecossistemas marinhos</button></li>
+    <li role="presentation"><button role="tab" data-tab="glossario" aria-selected="false">Glossário ilustrado</button></li>
+    <li role="presentation"><button role="tab" data-tab="infograficos" aria-selected="false">Infográficos</button></li>
+    <li role="presentation"><button role="tab" data-tab="jogos" aria-selected="false">Jogos</button></li>
+    <li role="presentation"><button role="tab" data-tab="blog" aria-selected="false">Blog</button></li>
+    <li role="presentation"><button role="tab" data-tab="sobre" aria-selected="false">Sobre o projeto</button></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- ===================== INÍCIO ===================== -->
+  <section id="inicio" role="tabpanel">
+    <div class="hero">
+      <div class="rotulo">Divulgação científica</div>
+      <h1>O que vive embaixo dos seus pés na praia?</h1>
+      <p class="tese">Bentos é o nome que se dá a todo organismo que vive associado ao fundo dos ambientes
+      aquáticos — do mexilhão grudado na pedra ao verme escondido na areia. Este site é feito por
+      estudantes de Ecologia de Ambientes Bentônicos da UNESP para mostrar, de um jeito simples, por que
+      esses bichos discretos sustentam praias, costões e manguezais inteiros.</p>
+
+      <figure class="faixa-diagrama">
+        <svg viewBox="0 0 640 190" role="img" aria-labelledby="zonTitle zonDesc" style="width:100%;height:auto;">
+          <title id="zonTitle">Zonação vertical de um costão rochoso</title>
+          <desc id="zonDesc">Diagrama mostrando quatro faixas do costão, da mais alta e mais seca até a mais baixa e sempre submersa.</desc>
+          <rect x="0" y="0" width="640" height="55" fill="#EDE6D6"/>
+          <rect x="0" y="55" width="640" height="34" fill="#CBD9DF"/>
+          <rect x="0" y="89" width="640" height="34" fill="#8FB6CC"/>
+          <rect x="0" y="123" width="640" height="34" fill="#4A85A8"/>
+          <rect x="0" y="157" width="640" height="33" fill="#0E3A5C"/>
+          <line x1="0" y1="123" x2="640" y2="123" stroke="#C1613D" stroke-width="2" stroke-dasharray="6 5"/>
+          <text x="10" y="72" font-family="IBM Plex Mono, monospace" font-size="11" fill="#4A3F2E">SUPRALITORAL — molhado só por respingo</text>
+          <text x="10" y="106" font-family="IBM Plex Mono, monospace" font-size="11" fill="#0E3A5C">MESOLITORAL — expõe e submerge a cada maré</text>
+          <text x="10" y="140" font-family="IBM Plex Mono, monospace" font-size="11" fill="#F2F7FA">INFRALITORAL SUPERIOR — quase sempre submerso</text>
+          <text x="10" y="177" font-family="IBM Plex Mono, monospace" font-size="11" fill="#DCE9F1">INFRALITORAL — sempre submerso</text>
+        </svg>
+        <figcaption>Exemplo de infográfico feito em SVG direto no código — os alunos podem duplicar essa lógica para criar os próprios diagramas sem precisar de arquivos de imagem externos.</figcaption>
+      </figure>
+    </div>
+
+    <h2>Como navegar</h2>
+    <div class="grade">
+      <div class="cartao"><h3>Ecossistemas marinhos</h3><p>Sete ambientes bentônicos, do costão rochoso ao mar profundo.</p></div>
+      <div class="cartao"><h3>Glossário ilustrado</h3><p>Termos técnicos de ecologia explicados em linguagem simples.</p></div>
+      <div class="cartao"><h3>Jogos</h3><p>Três jogos para treinar quem é quem, testar conhecimento e montar a zonação.</p></div>
+      <div class="cartao"><h3>Blog</h3><p>Textos curtos escritos pela turma sobre saídas de campo e curiosidades.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== ECOSSISTEMAS MARINHOS ===================== -->
+  <section id="ecossistemas" role="tabpanel" hidden>
+    <h2>Ecossistemas marinhos</h2>
+    <p>Do costão rochoso, na faixa de maré, até o mar profundo, sem luz solar. Cada grupo da turma pode
+    adotar um ecossistema e melhorar o texto e a foto/ilustração ao longo do semestre.</p>
+    <div class="grade" id="grade-ecossistemas"></div>
+  </section>
+
+  <!-- ===================== GLOSSÁRIO ===================== -->
+  <section id="glossario" role="tabpanel" hidden>
+    <h2>Glossário ilustrado</h2>
+    <p>Cada termo tem um bloco de cor no lugar da ilustração — troquem por uma imagem, foto de campo ou
+    desenho da turma (basta substituir o <code>&lt;div class="foto-espaco"&gt;</code> por uma tag
+    <code>&lt;img&gt;</code> no código, ou por uma imagem de fundo via CSS).</p>
+    <div class="grade" id="grade-glossario"></div>
+  </section>
+
+  <!-- ===================== INFOGRÁFICOS ===================== -->
+  <section id="infograficos" role="tabpanel" hidden>
+    <h2>Infográficos</h2>
+    <p>O primeiro card abaixo é um exemplo funcional (SVG puro, sem imagem externa). Os outros são
+    espaços reservados — cada grupo pode substituir pelo próprio infográfico.</p>
+    <div class="grade" id="grade-infograficos"></div>
+  </section>
+
+  <!-- ===================== JOGOS ===================== -->
+  <section id="jogos" role="tabpanel" hidden>
+    <h2>Jogos</h2>
+    <p>Três formatos diferentes de jogo, todos em HTML/CSS/JavaScript puro, sem bibliotecas externas —
+    um bom ponto de partida para a turma criar outros jogos no mesmo estilo.</p>
+
+    <ul class="sub-abas" role="tablist" aria-label="Escolher jogo">
+      <li role="presentation"><button role="tab" data-jogo="jogo1" aria-selected="true">Jogo 1 · Memória bentônica</button></li>
+      <li role="presentation"><button role="tab" data-jogo="jogo2" aria-selected="false">Jogo 2 · Quiz bentônico</button></li>
+      <li role="presentation"><button role="tab" data-jogo="jogo3" aria-selected="false">Jogo 3 · Monte a zonação</button></li>
+    </ul>
+
+    <!-- ---- Jogo 1: memória ---- -->
+    <div class="jogo-painel" id="jogo1">
+      <p>Encontre os pares: organismo + característica.</p>
+      <div class="placar" id="placar-jogo1">Tentativas: 0 · Pares encontrados: 0 de 0</div>
+      <div class="tabuleiro" id="tabuleiro"></div>
+      <p style="margin-top:1rem;"><button class="botao-secundario" id="reiniciar-jogo1">Reiniciar jogo</button></p>
+    </div>
+
+    <!-- ---- Jogo 2: quiz ---- -->
+    <div class="jogo-painel" id="jogo2" hidden>
+      <p>Perguntas de múltipla escolha sobre ecologia bentônica.</p>
+      <div class="quiz-caixa">
+        <div class="quiz-progresso" id="quiz-progresso"></div>
+        <h3 id="quiz-pergunta" style="font-size:1.05rem;"></h3>
+        <div class="quiz-opcoes" id="quiz-opcoes"></div>
+        <p class="quiz-feedback" id="quiz-feedback"></p>
+      </div>
+      <p style="margin-top:1rem;"><button class="botao-secundario" id="reiniciar-jogo2">Reiniciar quiz</button></p>
+    </div>
+
+    <!-- ---- Jogo 3: zonação ---- -->
+    <div class="jogo-painel" id="jogo3" hidden>
+      <p>Arraste cada organismo até a faixa do costão onde ele vive. (Se preferir não arrastar, também
+      dá para tocar no organismo e depois tocar na faixa certa.)</p>
+      <div class="placar" id="placar-jogo3">Tentativas: 0 · Acertos: 0 de 0</div>
+      <div class="zonacao-cena" id="zonacao-zonas"></div>
+      <div class="zonacao-banco" id="zonacao-banco"></div>
+      <p style="margin-top:1rem;"><button class="botao-secundario" id="reiniciar-jogo3">Reiniciar jogo</button></p>
+    </div>
+  </section>
+
+  <!-- ===================== BLOG ===================== -->
+  <section id="blog" role="tabpanel" hidden>
+    <h2>Blog da turma</h2>
+    <p>Textos curtos, em primeira pessoa, sobre saídas de campo, espécies encontradas ou bastidores da
+    disciplina.</p>
+    <div id="lista-posts"></div>
+
+    <form class="form-post" id="form-novo-post">
+      <h3 style="margin-bottom:0;">Escrever novo post</h3>
+      <div>
+        <label for="post-titulo">Título</label>
+        <input id="post-titulo" required placeholder="Ex.: O que encontramos na maré de sizígia">
+      </div>
+      <div>
+        <label for="post-autor">Autor(a)</label>
+        <input id="post-autor" required placeholder="Seu nome">
+      </div>
+      <div>
+        <label for="post-texto">Texto</label>
+        <textarea id="post-texto" rows="4" required placeholder="Escreva aqui..."></textarea>
+      </div>
+      <button class="botao-primario" type="submit" style="justify-self:start;">Publicar</button>
+      <p class="aviso">Este formulário adiciona o post apenas nesta sessão do navegador — ao fechar a
+      página, o post some, porque é um protótipo sem servidor. Para publicar de verdade e manter os
+      posts salvos, a turma vai precisar de um lugar para guardar os dados (ver seção "Sobre o
+      projeto" → "Como manter o conteúdo depois do fim do semestre").</p>
+    </form>
+  </section>
+
+  <!-- ===================== SOBRE ===================== -->
+  <section id="sobre" role="tabpanel" hidden>
+    <h2>Sobre o projeto</h2>
+    <p>Este site é uma Atividade Curricular de Extensão Universitária (ACEU) da disciplina de Ecologia
+    de Ambientes Bentônicos, produzida por estudantes de graduação da UNESP com o objetivo de aproximar
+    o público leigo da ecologia dos fundos marinhos e estuarinos.</p>
+
+    <h3>Como manter o conteúdo depois do fim do semestre</h3>
+    <p>Este arquivo é um protótipo estático (HTML puro): todo o conteúdo dos jogos, do glossário e do
+    blog fica dentro do próprio código, num objeto chamado <code>CONTEUDO</code>. Isso é ótimo para
+    editar rapidamente, mas os posts de blog escritos pelo formulário não ficam salvos entre visitas.
+    Para um site que a turma vá alimentar continuamente ano após ano, três caminhos simples:</p>
+    <ul>
+      <li><strong>Hospedagem estática + edição no GitHub</strong>: publicar este arquivo no GitHub Pages;
+      cada turma nova edita o objeto <code>CONTEUDO</code> direto no repositório.</li>
+      <li><strong>Planilha como banco de dados</strong>: usar um Google Forms + Google Sheets publicado
+      como CSV, e o site lê esse CSV para montar os posts automaticamente — sem precisar programar um
+      backend.</li>
+      <li><strong>CMS pronto</strong>: migrar para uma ferramenta como WordPress ou um gerador de site
+      estático com painel de edição (ex.: Netlify CMS), o que exige mais configuração inicial, mas
+      facilita a edição por quem não programa.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <p>Maré Alta — projeto de extensão universitária.</p>
+  <p>Feito por estudantes da disciplina de Ecologia de Ambientes Bentônicos, Instituto de Biociências,
+  UNESP, Campus do Litoral Paulista (UNESP/IBCLP) — Professor Rodrigo Domingues.</p>
+</footer>
+
+<script>
+/* =========================================================================
+   >>> EDITAR AQUI <<<
+   Todo o conteúdo textual do site (ecossistemas, glossário, infográficos,
+   cartas/perguntas dos jogos e posts do blog) está neste objeto. Para
+   adicionar, remover ou mudar conteúdo, edite os arrays abaixo — não é
+   necessário mexer no restante do JavaScript.
+   ========================================================================= */
+const CONTEUDO = {
+
+  /* Degradê do litoral (mais claro) ao mar profundo (mais escuro) —
+     a cor de cada card já conta uma pequena história por si só. */
+  ecossistemas: [
+    { nome:"Costão rochoso", cor:"#6FA8C7",
+      texto:"Substrato duro colonizado por mexilhões, cracas, algas e ouriços, organizados em faixas de acordo com a exposição à maré. [texto a ser melhorado pela turma]" },
+    { nome:"Manguezal", cor:"#5695B9",
+      texto:"Raízes submersas que servem de berçário para caranguejos, ostras e peixes juvenis, num sedimento rico em matéria orgânica. [texto a ser melhorado pela turma]" },
+    { nome:"Praia arenosa", cor:"#3E7FA6",
+      texto:"Ambiente aparentemente vazio, mas com toda uma fauna que vive entre os grãos de areia (meiofauna) e enterrada no sedimento. [texto a ser melhorado pela turma]" },
+    { nome:"Recife de coral", cor:"#2E6B93",
+      texto:"Estrutura construída por corais formadores de recife, com altíssima biodiversidade associada de peixes, moluscos e outros invertebrados. [texto a ser melhorado pela turma]" },
+    { nome:"Recife de rodolito", cor:"#205480",
+      texto:"Bancos de algas calcárias que formam estruturas tridimensionais no fundo, abrigando alta biodiversidade em águas mais profundas que os recifes de coral. [texto a ser melhorado pela turma]" },
+    { nome:"Plataforma continental", cor:"#163F66",
+      texto:"Fundo marinho relativamente raso que se estende da costa até a quebra do talude, com sedimentos variados e importância pesqueira. [texto a ser melhorado pela turma]" },
+    { nome:"Mar profundo", cor:"#0E2A4A",
+      texto:"Ambiente sem luz solar, com pressão altíssima e organismos adaptados à escuridão, ao frio e à escassez de alimento. [texto a ser melhorado pela turma]" }
+  ],
+
+  glossario: [
+    { termo:"Bentos", cor:"#2E6B93", definicao:"Conjunto de organismos que vivem associados ao fundo de ambientes aquáticos, sejam marinhos, estuarinos ou de água doce." },
+    { termo:"Zonação", cor:"#C1613D", definicao:"Distribuição dos organismos em faixas horizontais ao longo do costão, de acordo com o tempo de exposição à maré." },
+    { termo:"Epifauna", cor:"#3E7FA6", definicao:"Animais que vivem sobre a superfície do substrato, como cracas e mexilhões grudados em rochas." },
+    { termo:"Infauna", cor:"#0E3A5C", definicao:"Animais que vivem enterrados dentro do sedimento, como muitos vermes poliquetas e bivalves escavadores." },
+    { termo:"Meiofauna", cor:"#205480", definicao:"Organismos bentônicos microscópicos que vivem entre os grãos de sedimento, geralmente entre 0,04 e 1 mm." },
+    { termo:"Bioincrustação", cor:"#163F66", definicao:"Acúmulo de organismos (algas, cracas, mexilhões) sobre superfícies como cascos de barco e estruturas submersas." }
+  ],
+
+  infograficos: [
+    { titulo:"Zonação vertical de um costão rochoso", pronto:true,
+      legenda:"Ver o diagrama completo na aba Início." },
+    { titulo:"Cadeia trófica bentônica", pronto:false, legenda:"Espaço reservado — grupo responsável pode inserir aqui." },
+    { titulo:"Ciclo de vida do mexilhão (Perna perna)", pronto:false, legenda:"Espaço reservado — grupo responsável pode inserir aqui." },
+    { titulo:"Serviços ecossistêmicos do manguezal", pronto:false, legenda:"Espaço reservado — grupo responsável pode inserir aqui." }
+  ],
+
+  /* Jogo 1 — memória: cada item vira DUAS cartas (organismo + característica) */
+  jogo1: [
+    { organismo:"Mexilhão", caracteristica:"Filtra água do mar para se alimentar" },
+    { organismo:"Craca", caracteristica:"Fica grudada de cabeça para baixo na rocha" },
+    { organismo:"Poliqueta", caracteristica:"Verme marinho segmentado do sedimento" },
+    { organismo:"Ouriço-do-mar", caracteristica:"Corpo coberto de espinhos móveis" },
+    { organismo:"Estrela-do-mar", caracteristica:"Consegue regenerar braços perdidos" },
+    { organismo:"Caranguejo de mangue", caracteristica:"Escava tocas no sedimento do manguezal" },
+    { organismo:"Coral pétreo", caracteristica:"Constrói esqueleto de carbonato de cálcio" },
+    { organismo:"Rodolito", caracteristica:"Alga calcária que forma bancos no fundo do mar" }
+  ],
+
+  /* Jogo 2 — quiz: "correta" é o índice (0,1,2,3) da opção certa em "opcoes" */
+  jogo2: [
+    { pergunta:"O que é bentos?",
+      opcoes:["Organismos que vivem no fundo de ambientes aquáticos","Só peixes de água profunda","Plâncton que flutua na superfície","Aves que vivem perto da costa"],
+      correta:0 },
+    { pergunta:"O que caracteriza a zona mesolitoral de um costão rochoso?",
+      opcoes:["Fica sempre submersa","Nunca é tocada pela água do mar","Alterna entre exposta e submersa a cada maré","É exclusiva de manguezais"],
+      correta:2 },
+    { pergunta:"Qual é a principal diferença entre epifauna e infauna?",
+      opcoes:["Não há diferença real","Epifauna vive sobre o substrato, infauna vive dentro dele","Epifauna só existe em água doce","Infauna vive apenas em recifes de coral"],
+      correta:1 },
+    { pergunta:"Por que os manguezais são chamados de 'berçários marinhos'?",
+      opcoes:["Porque só peixes adultos vivem lá","Porque não têm predadores","Porque oferecem abrigo e alimento para formas jovens de várias espécies","Porque ficam longe do mar"],
+      correta:2 },
+    { pergunta:"O que são rodolitos?",
+      opcoes:["Peixes de recife","Rochas vulcânicas submersas","Tipos de coral mole","Algas calcárias que formam estruturas no fundo do mar"],
+      correta:3 }
+  ],
+
+  /* Jogo 3 — zonação: cenário com 4 faixas (cores no degradê do site) e 8 organismos.
+     Cada organismo aponta para o "nome" exato de uma zona, e para uma chave de ícone
+     (ver objeto ICONES no JavaScript, logo abaixo do CONTEUDO). */
+  jogo3: {
+    zonas: [
+      { nome:"Supralitoral", cor:"#DCD3BE", corTexto:"#3A2F22", descricao:"molhada só por respingo de onda" },
+      { nome:"Mesolitoral", cor:"#8FB6CC", corTexto:"#0E3A5C", descricao:"expõe e submerge a cada maré" },
+      { nome:"Infralitoral superior", cor:"#4A85A8", corTexto:"#FFFFFF", descricao:"quase sempre submersa" },
+      { nome:"Infralitoral", cor:"#0E3A5C", corTexto:"#FFFFFF", descricao:"sempre submersa" }
+    ],
+    organismos: [
+      { nome:"Líquen negro", zona:"Supralitoral", icone:"liquen" },
+      { nome:"Craca", zona:"Supralitoral", icone:"craca" },
+      { nome:"Mexilhão", zona:"Mesolitoral", icone:"mexilhao" },
+      { nome:"Lapa", zona:"Mesolitoral", icone:"lapa" },
+      { nome:"Alga parda", zona:"Infralitoral superior", icone:"alga" },
+      { nome:"Anêmona-do-mar", zona:"Infralitoral superior", icone:"anemona" },
+      { nome:"Ouriço-do-mar", zona:"Infralitoral", icone:"ourico" },
+      { nome:"Estrela-do-mar", zona:"Infralitoral", icone:"estrela" }
+    ]
+  },
+
+  blog: [
+    { titulo:"Primeira saída de campo no costão de exemplo", autor:"Turma ACEU", data:"2026-03-10",
+      resumo:"Registro da primeira visita de campo da disciplina, com observações de zonação vertical.",
+      texto:"Na nossa primeira saída, observamos claramente as faixas de zonação descritas em aula: cracas na parte mais alta, mexilhões na faixa intermediária e algas na parte mais baixa, quase sempre submersa. Também encontramos poças de maré cheias de pequenos caranguejos e anêmonas." },
+    { titulo:"Por que a areia da praia não é tão vazia quanto parece", autor:"Turma ACEU", data:"2026-03-24",
+      resumo:"Uma introdução simples ao conceito de meiofauna para quem nunca ouviu falar do tema.",
+      texto:"Quando pisamos na areia molhada perto da água, estamos andando sobre um ecossistema inteiro invisível a olho nu: a meiofauna. Nematódeos, copépodes e outros organismos microscópicos vivem entre os grãos de areia e cumprem papéis importantes na decomposição de matéria orgânica." }
+  ]
+};
+/* ======================= fim da área de conteúdo editável ======================= */
+
+
+/* --------------------------- Navegação por abas (principal) --------------------------- */
+const botoesAba = document.querySelectorAll('.faixa-nav .abas button');
+const paineis = document.querySelectorAll('main > section[role="tabpanel"]');
+botoesAba.forEach(botao=>{
+  botao.addEventListener('click', ()=>{
+    botoesAba.forEach(b=>b.setAttribute('aria-selected','false'));
+    botao.setAttribute('aria-selected','true');
+    const alvo = botao.dataset.tab;
+    paineis.forEach(p=> p.hidden = (p.id !== alvo));
+    window.scrollTo({top:0});
+  });
+});
+
+/* --------------------------- Renderizar Ecossistemas --------------------------- */
+const gradeEcossistemas = document.getElementById('grade-ecossistemas');
+CONTEUDO.ecossistemas.forEach(e=>{
+  const div = document.createElement('div');
+  div.className = 'cartao';
+  div.innerHTML = `<div class="foto-espaco" style="background:${e.cor}">ESPAÇO PARA FOTO<br>${e.nome}</div>
+                    <h3>${e.nome}</h3><p>${e.texto}</p>`;
+  gradeEcossistemas.appendChild(div);
+});
+
+/* --------------------------- Renderizar Glossário --------------------------- */
+const gradeGlossario = document.getElementById('grade-glossario');
+CONTEUDO.glossario.forEach(g=>{
+  const div = document.createElement('div');
+  div.className = 'cartao';
+  div.innerHTML = `<div class="foto-espaco" style="background:${g.cor}">ILUSTRAÇÃO<br>${g.termo}</div>
+                    <h3>${g.termo}</h3><p>${g.definicao}</p>`;
+  gradeGlossario.appendChild(div);
+});
+
+/* --------------------------- Renderizar Infográficos --------------------------- */
+const gradeInfo = document.getElementById('grade-infograficos');
+CONTEUDO.infograficos.forEach(i=>{
+  const div = document.createElement('div');
+  div.className = 'info-card';
+  div.innerHTML = i.pronto
+    ? `<div class="corpo"><h3>${i.titulo}</h3><p>${i.legenda}</p></div>`
+    : `<div class="em-breve">espaço reservado</div><div class="corpo"><h3>${i.titulo}</h3><p>${i.legenda}</p></div>`;
+  gradeInfo.appendChild(div);
+});
+
+/* --------------------------- Sub-navegação dos jogos --------------------------- */
+const botoesJogo = document.querySelectorAll('.sub-abas button');
+const painelJogos = document.querySelectorAll('.jogo-painel');
+botoesJogo.forEach(botao=>{
+  botao.addEventListener('click', ()=>{
+    botoesJogo.forEach(b=>b.setAttribute('aria-selected','false'));
+    botao.setAttribute('aria-selected','true');
+    const alvo = botao.dataset.jogo;
+    painelJogos.forEach(p=> p.hidden = (p.id !== alvo));
+  });
+});
+
+/* ============================================================
+   JOGO 1 — Memória bentônica
+   ============================================================ */
+const tabuleiroEl = document.getElementById('tabuleiro');
+const placarJogo1El = document.getElementById('placar-jogo1');
+let cartasViradas = [], paresEncontrados = 0, tentativasJogo1 = 0, travadoJogo1 = false;
+
+function montarBaralho(){
+  const pares = [];
+  CONTEUDO.jogo1.forEach((item, i)=>{
+    pares.push({grupo:i, texto:item.organismo});
+    pares.push({grupo:i, texto:item.caracteristica});
+  });
+  for(let i = pares.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [pares[i], pares[j]] = [pares[j], pares[i]];
+  }
+  return pares;
+}
+
+function iniciarJogo1(){
+  cartasViradas = []; paresEncontrados = 0; tentativasJogo1 = 0; travadoJogo1 = false;
+  atualizarPlacarJogo1();
+  tabuleiroEl.innerHTML = '';
+  montarBaralho().forEach((carta)=>{
+    const el = document.createElement('button');
+    el.className = 'carta';
+    el.type = 'button';
+    el.dataset.grupo = carta.grupo;
+    el.textContent = carta.texto;
+    el.setAttribute('aria-label','Carta virada para baixo');
+    el.addEventListener('click', ()=>virarCarta(el));
+    tabuleiroEl.appendChild(el);
+  });
+}
+
+function virarCarta(el){
+  if(travadoJogo1 || el.classList.contains('virada') || el.classList.contains('encontrada')) return;
+  el.classList.add('virada');
+  cartasViradas.push(el);
+  if(cartasViradas.length === 2){
+    tentativasJogo1++;
+    travadoJogo1 = true;
+    const [a,b] = cartasViradas;
+    if(a.dataset.grupo === b.dataset.grupo){
+      a.classList.add('encontrada'); b.classList.add('encontrada');
+      paresEncontrados++;
+      cartasViradas = []; travadoJogo1 = false;
+      atualizarPlacarJogo1();
+      if(paresEncontrados === CONTEUDO.jogo1.length){
+        placarJogo1El.textContent += ' — Parabéns, todos os pares encontrados!';
+      }
+    } else {
+      setTimeout(()=>{
+        a.classList.remove('virada'); b.classList.remove('virada');
+        cartasViradas = []; travadoJogo1 = false;
+      }, 700);
+    }
+    atualizarPlacarJogo1();
+  }
+}
+
+function atualizarPlacarJogo1(){
+  placarJogo1El.textContent = `Tentativas: ${tentativasJogo1} · Pares encontrados: ${paresEncontrados} de ${CONTEUDO.jogo1.length}`;
+}
+
+document.getElementById('reiniciar-jogo1').addEventListener('click', iniciarJogo1);
+iniciarJogo1();
+
+/* ============================================================
+   JOGO 2 — Quiz bentônico
+   ============================================================ */
+const quizProgressoEl = document.getElementById('quiz-progresso');
+const quizPerguntaEl = document.getElementById('quiz-pergunta');
+const quizOpcoesEl = document.getElementById('quiz-opcoes');
+const quizFeedbackEl = document.getElementById('quiz-feedback');
+let quizIndice = 0, quizAcertos = 0, quizRespondida = false;
+
+function iniciarJogo2(){
+  quizIndice = 0; quizAcertos = 0;
+  renderizarPergunta();
+}
+
+function renderizarPergunta(){
+  quizRespondida = false;
+  quizFeedbackEl.textContent = '';
+  if(quizIndice >= CONTEUDO.jogo2.length){
+    quizProgressoEl.textContent = 'Quiz concluído';
+    quizPerguntaEl.textContent = `Você acertou ${quizAcertos} de ${CONTEUDO.jogo2.length} perguntas.`;
+    quizOpcoesEl.innerHTML = '';
+    return;
+  }
+  const pergunta = CONTEUDO.jogo2[quizIndice];
+  quizProgressoEl.textContent = `Pergunta ${quizIndice + 1} de ${CONTEUDO.jogo2.length} · Acertos até agora: ${quizAcertos}`;
+  quizPerguntaEl.textContent = pergunta.pergunta;
+  quizOpcoesEl.innerHTML = '';
+  pergunta.opcoes.forEach((opcao, i)=>{
+    const botao = document.createElement('button');
+    botao.type = 'button';
+    botao.textContent = opcao;
+    botao.addEventListener('click', ()=>responderQuiz(i, botao));
+    quizOpcoesEl.appendChild(botao);
+  });
+}
+
+function responderQuiz(indiceEscolhido, botaoClicado){
+  if(quizRespondida) return;
+  quizRespondida = true;
+  const pergunta = CONTEUDO.jogo2[quizIndice];
+  const correta = pergunta.correta;
+  [...quizOpcoesEl.children].forEach((botao, i)=>{
+    botao.disabled = true;
+    if(i === correta) botao.classList.add('certa');
+    if(i === indiceEscolhido && i !== correta) botao.classList.add('errada');
+  });
+  if(indiceEscolhido === correta){
+    quizAcertos++;
+    quizFeedbackEl.textContent = 'Certo!';
+    quizFeedbackEl.style.color = '#2E7D46';
+  } else {
+    quizFeedbackEl.textContent = 'Não foi dessa vez.';
+    quizFeedbackEl.style.color = 'var(--concha)';
+  }
+  setTimeout(()=>{ quizIndice++; renderizarPergunta(); }, 1100);
+}
+
+document.getElementById('reiniciar-jogo2').addEventListener('click', iniciarJogo2);
+iniciarJogo2();
+
+/* ============================================================
+   JOGO 3 — Monte a zonação (cenário ilustrado + arrastar-e-soltar)
+   ============================================================ */
+
+/* Ícones desenhados em SVG puro para cada organismo — trocar por foto/desenho
+   próprio depois é só editar (ou substituir) as strings deste objeto.
+   >>> EDITAR AQUI <<< se quiser usar outros ícones. */
+const ICONES = {
+  liquen: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#9c9284"/><ellipse cx="17" cy="18" rx="6" ry="4" fill="#2b2b2b"/><ellipse cx="29" cy="22" rx="5" ry="3.5" fill="#3a3a3a"/><ellipse cx="20" cy="30" rx="7" ry="4" fill="#2b2b2b"/><ellipse cx="31" cy="32" rx="4" ry="3" fill="#3a3a3a"/></svg>`,
+  craca: `<svg viewBox="0 0 48 48"><polygon points="14,34 20,14 26,34" fill="#cfc7b0" stroke="#8f8570" stroke-width="1.5"/><polygon points="24,36 30,18 36,36" fill="#c3bba3" stroke="#8f8570" stroke-width="1.5"/><polygon points="8,36 13,22 18,36" fill="#b8af97" stroke="#8f8570" stroke-width="1.5"/></svg>`,
+  mexilhao: `<svg viewBox="0 0 48 48"><path d="M24 6 C34 10 36 26 30 38 C27 43 21 43 18 38 C12 26 14 10 24 6 Z" fill="#1c2b3a" stroke="#0d161f" stroke-width="1"/><path d="M24 10 C31 14 32 25 28 34" fill="none" stroke="#3a5062" stroke-width="1.5"/></svg>`,
+  lapa: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="#c8b48a"/><circle cx="24" cy="24" r="12.5" fill="#b39b6d"/><circle cx="24" cy="24" r="7" fill="#8a7550"/><circle cx="24" cy="24" r="2.5" fill="#5c4c33"/></svg>`,
+  alga: `<svg viewBox="0 0 48 48"><path d="M24 44 C18 34 30 28 22 18 C34 22 30 8 24 4 C36 10 34 24 26 30 C34 32 30 40 24 44 Z" fill="#6b7a3e"/></svg>`,
+  anemona: `<svg viewBox="0 0 48 48"><g stroke="#e07a5f" stroke-width="2.5" stroke-linecap="round"><line x1="24" y1="24" x2="24" y2="6"/><line x1="24" y1="24" x2="38" y2="12"/><line x1="24" y1="24" x2="42" y2="24"/><line x1="24" y1="24" x2="38" y2="36"/><line x1="24" y1="24" x2="24" y2="42"/><line x1="24" y1="24" x2="10" y2="36"/><line x1="24" y1="24" x2="6" y2="24"/><line x1="24" y1="24" x2="10" y2="12"/></g><circle cx="24" cy="24" r="8" fill="#e07a5f"/></svg>`,
+  ourico: `<svg viewBox="0 0 48 48"><g stroke="#2b1f3d" stroke-width="2"><line x1="24" y1="24" x2="24" y2="4"/><line x1="24" y1="24" x2="36" y2="8"/><line x1="24" y1="24" x2="44" y2="18"/><line x1="24" y1="24" x2="44" y2="30"/><line x1="24" y1="24" x2="36" y2="40"/><line x1="24" y1="24" x2="24" y2="44"/><line x1="24" y1="24" x2="12" y2="40"/><line x1="24" y1="24" x2="4" y2="30"/><line x1="24" y1="24" x2="4" y2="18"/><line x1="24" y1="24" x2="12" y2="8"/></g><circle cx="24" cy="24" r="9" fill="#2b1f3d"/></svg>`,
+  estrela: `<svg viewBox="0 0 48 48"><polygon points="24,4 29,18 44,18 32,27 36,42 24,33 12,42 16,27 4,18 19,18" fill="#e07a3e"/></svg>`
+};
+
+const bancoEl = document.getElementById('zonacao-banco');
+const zonasEl = document.getElementById('zonacao-zonas');
+const placarJogo3El = document.getElementById('placar-jogo3');
+let fichaSelecionada = null, orgSelecionada = null, acertosJogo3 = 0, tentativasJogo3 = 0;
+
+function iniciarJogo3(){
+  acertosJogo3 = 0; tentativasJogo3 = 0; fichaSelecionada = null; orgSelecionada = null;
+  atualizarPlacarJogo3();
+
+  /* cenário: uma faixa (zona-alvo) para cada zona, empilhadas do litoral ao fundo */
+  zonasEl.innerHTML = '';
+  CONTEUDO.jogo3.zonas.forEach(zona=>{
+    const faixa = document.createElement('div');
+    faixa.className = 'zona-alvo';
+    faixa.dataset.zona = zona.nome;
+    faixa.style.background = zona.cor;
+    faixa.style.color = zona.corTexto;
+    faixa.innerHTML = `<div class="zona-rotulo">${zona.nome}<small>${zona.descricao}</small></div>
+                        <div class="lista-colocados"></div>`;
+    faixa.addEventListener('click', ()=>{
+      if(fichaSelecionada) tentarColocar(fichaSelecionada, orgSelecionada, faixa);
+    });
+    zonasEl.appendChild(faixa);
+  });
+
+  /* banco de organismos, embaralhado */
+  bancoEl.innerHTML = '';
+  const organismosEmbaralhados = [...CONTEUDO.jogo3.organismos].sort(()=>Math.random()-0.5);
+  organismosEmbaralhados.forEach(org=>{
+    const ficha = document.createElement('div');
+    ficha.className = 'criatura-ficha';
+    ficha.innerHTML = `${ICONES[org.icone] || ''}<span>${org.nome}</span>`;
+    tornarInterativo(ficha, org);
+    bancoEl.appendChild(ficha);
+  });
+}
+
+/* Um único gesto cobre os dois modos de jogar:
+   - se a pessoa arrasta (move o dedo/mouse), a ficha segue o ponteiro e é
+     solta na faixa de baixo;
+   - se é só um toque/clique rápido sem arrastar, funciona como "selecionar
+     e depois tocar na faixa", para quem tiver mais dificuldade motora. */
+function tornarInterativo(ficha, org){
+  ficha.addEventListener('pointerdown', (ev)=>{
+    if(ficha.dataset.colocada === '1') return;
+    if(ev.cancelable) ev.preventDefault();
+
+    const inicioX = ev.clientX, inicioY = ev.clientY;
+    const rect = ficha.getBoundingClientRect();
+    const offsetX = inicioX - rect.left, offsetY = inicioY - rect.top;
+    let moveu = false, fantasma = null;
+
+    function aoMover(e){
+      const dx = e.clientX - inicioX, dy = e.clientY - inicioY;
+      if(!moveu && Math.hypot(dx,dy) > 6){
+        moveu = true;
+        fantasma = ficha.cloneNode(true);
+        fantasma.classList.add('arrastando-fantasma');
+        fantasma.style.width = rect.width + 'px';
+        document.body.appendChild(fantasma);
+        ficha.classList.add('origem-arrastando');
+        zonasEl.querySelectorAll('.zona-alvo').forEach(z=>z.classList.add('arraste-ativo'));
+      }
+      if(moveu && fantasma){
+        fantasma.style.left = (e.clientX - offsetX) + 'px';
+        fantasma.style.top = (e.clientY - offsetY) + 'px';
+      }
+    }
+
+    function aoSoltar(e){
+      document.removeEventListener('pointermove', aoMover);
+      document.removeEventListener('pointerup', aoSoltar);
+      zonasEl.querySelectorAll('.zona-alvo').forEach(z=>z.classList.remove('arraste-ativo'));
+
+      if(moveu){
+        if(fantasma) fantasma.remove();
+        ficha.classList.remove('origem-arrastando');
+        const elAlvo = document.elementFromPoint(e.clientX, e.clientY);
+        const zonaAlvo = elAlvo && elAlvo.closest('.zona-alvo');
+        if(zonaAlvo) tentarColocar(ficha, org, zonaAlvo);
+      } else {
+        selecionarFicha(ficha, org);
+      }
+    }
+
+    document.addEventListener('pointermove', aoMover);
+    document.addEventListener('pointerup', aoSoltar);
+  });
+}
+
+function selecionarFicha(ficha, org){
+  if(fichaSelecionada === ficha){
+    fichaSelecionada.classList.remove('selecionada');
+    fichaSelecionada = null; orgSelecionada = null;
+    return;
+  }
+  if(fichaSelecionada) fichaSelecionada.classList.remove('selecionada');
+  fichaSelecionada = ficha; orgSelecionada = org;
+  ficha.classList.add('selecionada');
+}
+
+function tentarColocar(ficha, org, faixa){
+  tentativasJogo3++;
+  if(org.zona === faixa.dataset.zona){
+    const lista = faixa.querySelector('.lista-colocados');
+    const copia = document.createElement('div');
+    copia.className = 'criatura-ficha';
+    copia.innerHTML = ICONES[org.icone] || '';
+    lista.appendChild(copia);
+
+    ficha.dataset.colocada = '1';
+    ficha.classList.add('colocada');
+    ficha.classList.remove('selecionada');
+    acertosJogo3++;
+    if(fichaSelecionada === ficha){ fichaSelecionada = null; orgSelecionada = null; }
+  } else {
+    faixa.classList.remove('tremer');
+    void faixa.offsetWidth; /* reinicia a animação */
+    faixa.classList.add('tremer');
+  }
+  atualizarPlacarJogo3();
+}
+
+function atualizarPlacarJogo3(){
+  const total = CONTEUDO.jogo3.organismos.length;
+  placarJogo3El.textContent = `Tentativas: ${tentativasJogo3} · Acertos: ${acertosJogo3} de ${total}`;
+  if(acertosJogo3 === total && total > 0){
+    placarJogo3El.textContent += ' — Zonação completa!';
+  }
+}
+
+document.getElementById('reiniciar-jogo3').addEventListener('click', iniciarJogo3);
+iniciarJogo3();
+
+/* --------------------------- Blog --------------------------- */
+const listaPosts = document.getElementById('lista-posts');
+
+function formatarData(iso){
+  const [ano,mes,dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function renderizarPosts(){
+  listaPosts.innerHTML = '';
+  [...CONTEUDO.blog].reverse().forEach((post, i)=>{
+    const div = document.createElement('article');
+    div.className = 'post';
+    const idTexto = `texto-post-${i}`;
+    div.innerHTML = `
+      <div class="post-meta">${formatarData(post.data)} · ${post.autor}</div>
+      <h3>${post.titulo}</h3>
+      <p>${post.resumo}</p>
+      <p class="texto-completo" id="${idTexto}" hidden>${post.texto}</p>
+      <button class="botao-secundario" type="button" data-alvo="${idTexto}">Ler texto completo</button>
+    `;
+    listaPosts.appendChild(div);
+  });
+  listaPosts.querySelectorAll('button[data-alvo]').forEach(botao=>{
+    botao.addEventListener('click', ()=>{
+      const alvo = document.getElementById(botao.dataset.alvo);
+      const aberto = !alvo.hidden;
+      alvo.hidden = aberto;
+      botao.textContent = aberto ? 'Ler texto completo' : 'Recolher texto';
+    });
+  });
+}
+renderizarPosts();
+
+document.getElementById('form-novo-post').addEventListener('submit', (ev)=>{
+  ev.preventDefault();
+  const titulo = document.getElementById('post-titulo').value.trim();
+  const autor = document.getElementById('post-autor').value.trim();
+  const texto = document.getElementById('post-texto').value.trim();
+  if(!titulo || !autor || !texto) return;
+  const hoje = new Date().toISOString().slice(0,10);
+  CONTEUDO.blog.push({
+    titulo, autor, data:hoje,
+    resumo: texto.length > 140 ? texto.slice(0,140).trim() + '…' : texto,
+    texto
+  });
+  renderizarPosts();
+  ev.target.reset();
+});
+</script>
+
+</body>
+</html>
